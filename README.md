@@ -1,4 +1,5 @@
-#Procedure to enable SSL for a Local Debian 10/11 Apache Web Server
+# Procedure to enable SSL for a Local Debian 10/11 Apache Web Server
+
 All the instructions I found assume you have a domain or have a large network where DNS is running. While I could install DNS using bind9 and I have done so on other local networks; These instructions are just to allow you to use SSL (https://\<some local ip address\>).
 
 Only by installing DNS through bind9 can you do https://\<some host name\>. That is *NOT* covered here.
@@ -17,26 +18,26 @@ John Talbot
 
 
 
-#Step 1. Becoming Your own Certificate Authority (CA)
+# Step 1. Becoming Your own Certificate Authority (CA)
 Kind of taken from:
 
   https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/ and other sources.
 
   Note: I wanted a designation that reflected services for my house. So SixtyFiveStableWay was born.  The files created are named for this but there is no hostname or FQDN, only an IP. Change the designation to your liking as well as the IP. At least this shows you a real example.
 
-##Step 1A.  As usual, update.
+## Step 1A.  As usual, update.
 
 ```
    Shell> sudo apt-get update
 ```
 
-##Step 1B.  Make sure OpenSSL is installed
+## Step 1B.  Make sure OpenSSL is installed
 
 ```
    Shell> sudo apt-get install openssl
 ```
 
-##Step 1C. Generate our Private Certificate Authority (CA) key.
+## Step 1C. Generate our Private Certificate Authority (CA) key.
 
    This will prompt for a passphase.  Keep this key and passphrase in
    a secure place.
@@ -47,7 +48,7 @@ Kind of taken from:
       Shell> openssl genrsa -des3 -out 65StableWayCA.key 2048
 ```
 
-##Step 1D. Create the root certificate.
+## Step 1D. Create the root certificate.
 
 This cert is good for 5 years (365\*5=1830) – you can change that.
 
@@ -69,11 +70,11 @@ Setup as follows for the root CA:
       Email Address []:SixtyFiveStableWay@gmail.com
 ```
 
-#Step 2. Installing the Root Certificate on Various Devices
+# Step 2. Installing the Root Certificate on Various Devices
 
    When a root certificate is installed on a device, any certificates the root certificate blesses, will be valid.
 
-##A. Installing the Root Certificate to the MacOS KeyChain
+## A. Installing the Root Certificate to the MacOS KeyChain
 
 Step 1. Open the macOS Keychain app
 
@@ -89,7 +90,7 @@ Step 5. Close the certificate window
 Step 6. It will ask you to enter your password (or scan your finger), do that
 
 
-##B. Installing root certificate on a IOS Device.
+## B. Installing root certificate on a IOS Device.
 
 Step 1. Email the root certificate to yourself so you can access it on your iOS device
 
@@ -111,7 +112,7 @@ Step 7. Go to Settings -> General  -> About -> Certificate Trust Settings
 
 Step 8. Enable the Trust for Root Certificate 192.168.2.66
 
-##C. Installing the Root Certificate on Debian
+## C. Installing the Root Certificate on Debian
 
 Step 1. Convert the .pem file to a .crt file
 
@@ -148,7 +149,7 @@ Step 5. Update certs non-interactively with sudo update-ca-certificates
            1 added, 0 removed; done.
 ```
 
-##D. Installing the Root Certificate to the Safari KeyChain
+## D. Installing the Root Certificate to the Safari KeyChain
 
 Step 1. Open Safari Menu (Tree lines on right)
 
@@ -162,7 +163,7 @@ Step 5. Select the 65StableWayRootCA.pem file
 
 Note: Your not done yet. You still need to do services like https (apache)
 
-##Step 3. Installing Apache with SSL
+## Step 3. Installing Apache with SSL
 
 Now that we’re a CA on all our devices, we can sign certificates for our Apache Web Server.
 
@@ -281,7 +282,7 @@ An SSL certificate is typically issued to a Fully Qualified Domain Name (FQDN) s
 
 So it can be possible to use an IP address. What that request looks like, I am not sure.  This however worked.
 
-#Step 4. Now we put it all together to create the certificate
+# Step 4. Now we put it all together to create the certificate
 
 Step 4A. Create the final certificate
 
@@ -405,7 +406,7 @@ Step 4K. Save, close, then do:
 
 Note: This just makes a link from the sites-available to the sites-enabled directory of /etc/apache2
 
-#Step 5. Now restart Apache:
+# Step 5. Now restart Apache:
 
 ```
        Shell> sudo service apache2 restart
@@ -433,7 +434,7 @@ Seeing both ports enabled will show:
        tcp    0   0 0.0.0.0:80   0.0.0.0:*  LISTEN      4488/apache2
 ```
 
-#Step 6. Let it Rip !!!
+# Step 6. Let it Rip !!!
 
 If you installed the root CA in all your devices you should then be able to go to https://192.168.2.66 and go directly to the Apache2 Debian Default Page WITHOUT ERRORS! Do not click though any untrusted web pages, except to maybe look at the certificate for errors. Never install it this way though. It defeats the  purpose.
 
